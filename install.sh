@@ -6,7 +6,7 @@
 # dhclient <interface>
 
 # This script can be run by executing the following:
-# curl -sL <URLHERE> | bash
+# curl -sL https://git.io/fjHo6 | bash
 
 
 ###############################################################################
