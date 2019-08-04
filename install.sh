@@ -53,10 +53,10 @@ clear
 : ${username:?"username can not be empty"}
 
 # password
-password=$(dialog --stdout --inputbox "Enter admin password:" 0 0 ) || exit 1
+password=$(dialog --stdout --passwordbox "Enter admin password:" 0 0 ) || exit 1
 clear
 : ${password:?"password can not be empty"}
-password2=$(dialog --stdout --inputbox "Re-enter admin password:" 0 0 ) || exit 1
+password2=$(dialog --stdout --passwordbox "Re-enter admin password:" 0 0 ) || exit 1
 clear
 : ${password2:?"password can not be empty"}
 [[ "$password" == "$password2" ]] || ( echo "Passwords did not match."; exit 1; )
