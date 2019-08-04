@@ -148,9 +148,9 @@ cat <<EOT >> /mnt/etc/hosts
 EOT
 
 # user setup
-arch-chroot /mnt useradd -mU -G wheel "$user"
+arch-chroot /mnt useradd -mU -G wheel "$username"
 
-echo "$user:$password" | chpasswd --root /mnt
+echo "$username:$password" | chpasswd --root /mnt
 echo "root:$password" | chpasswd --root /mnt
 
 # setup locale
