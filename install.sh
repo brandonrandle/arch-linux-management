@@ -163,7 +163,7 @@ echo "LANG=en_US.UTF-8" > /mnt/etc/locale.conf
 
 arch-chroot /mnt pacman -Sy --noconfirm grub
 arch-chroot /mnt grub-install /dev/sda
-arch-chroot /mnt grub-mkconfig -o /grub/grub.cfg
+arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 
 
 ###############################################################################
