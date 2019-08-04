@@ -161,8 +161,8 @@ echo "LANG=en_US.UTF-8" > /mnt/etc/locale.conf
 # INSTALL BOOTLOADER
 ###############################################################################
 
-arch-chroot /mnt pacman -Sy --noconfirm grub
-arch-chroot /mnt grub-install /dev/sda
+arch-chroot /mnt pacman -Sy --noconfirm grub efibootmgr
+arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
 arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 
 
