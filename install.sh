@@ -1,6 +1,10 @@
 #!/bin/bash
 # WARNING: This script will destroy data on the selected disk.
-# An internet connection is required to run this script.
+
+# An internet connection is required to run this script. Connect with:
+# wpa_supplicant -B -i <interface> -c <(wpa_passphrase <SSID> <PASSPHRASE>)
+# dhclient <interface>
+
 # This script can be run by executing the following:
 # curl -sL <URLHERE> | bash
 
