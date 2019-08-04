@@ -1,5 +1,9 @@
 #!/bin/bash
 # WARNING: This script will destroy data on the selected disk.
+# An internet connection is required to run this script.
+# This script can be run by executing the following:
+# curl -sL <URLHERE> | bash
+
 
 ###############################################################################
 # ERROR HANDLING
@@ -15,7 +19,7 @@ trap 's=$?; echo "$0: Error on line "$LINENO": $BASH_COMMAND"; exit $s' ERR
 
 
 ###############################################################################
-# UPDATE MIRRORS TODO: TEST
+# UPDATE MIRRORS
 ###############################################################################
 
 # REPO_URL=""
@@ -54,7 +58,6 @@ clear
 [[ "$password" == "$password2" ]] || ( echo "Passwords did not match."; exit 1; )
 
 # install disk
-# TODO: TEST
 devicelist=$(lsblk -dplnx size -o name,size | grep -Ev "boot|rpmb|loop" | tac)
 device=$(dialog --stdout --menu "Select installation disk:" 0 0 0 ${devicelist}) || exit 1
 clear
@@ -78,18 +81,19 @@ timedatectl set-ntp true
 
 
 ###############################################################################
-# DISK & PARTITIONS TODO
+# DISK & PARTITIONS
 ###############################################################################
 
-# set swap variables
-swap_size=$(free --mebi | awk '/Mem:/ {print $2}')
-swap_end=$(( $swap_size + 129 + 1 ))MiB
+# set size variables
+boot_size=200
+swap_size=$(free --mebi | awk '/Mem:/ {print $2}') # grabs size of ram
+swap_end=$(( $swap_size + ${boot_size} + 1 ))MiB
 
 # create partitions
-parted --script "${device}" -- mklabel gpt      \
-  mkpart ESP fat32 1Mib 129MiB                  \
-  set 1 boot on                                 \
-  mkpart primary linux-swap 129MiB ${swap_end}  \
+parted --script "${device}" -- mklabel gpt              \
+  mkpart primary ext3 1Mib ${boot_size}MiB              \
+  set 1 bios_grub on                                    \
+  mkpart primary linux-swap ${boot_size}MiB ${swap_end} \
   mkpart primary ext4 ${swap_end} 100%
 
 # set variables for partitions
@@ -103,9 +107,9 @@ wipefs "${part_swap}"
 wipefs "${part_root}"
 
 # create file systems
-mkfs.vfat -F32 "${part_boot}"
+mkfs.ext3 "${part_boot}"
 mkswap "${part_swap}"
-mkfs.fsfs -f "${part_root}"
+mkfs.ext4 "${part_root}"
 
 # perform mounting
 swapon "${part_swap}"
@@ -115,7 +119,7 @@ mount "${part_boot}" /mnt/boot
 
 
 ###############################################################################
-# BASIC INSTALLATION & CONFIGURATION TODO
+# BASIC INSTALLATION & CONFIGURATION
 ###############################################################################
 
 # install packages
@@ -125,7 +129,9 @@ pacstrap /mnt base
 genfstab -U /mnt >> /mnt/etc/fstab
 
 # set time zone
-# TODO
+# TODO: Make the region/city an interactive choice at the start
+arch-chroot /mnt ln -sf /usr/share/zoneinfo/America/Chicago /etc/localtime
+arch-chroot /mnt hwclock --systohc
 
 # set hostname
 echo "${hostname}" > /mnt/etc/hostname
@@ -143,14 +149,21 @@ arch-chroot /mnt useradd -mU -G wheel "$user"
 echo "$user:$password" | chpasswd --root /mnt
 echo "root:$password" | chpasswd --root /mnt
 
-
-###############################################################################
-# SETUP LOCALE
-###############################################################################
-
+# setup locale
 echo "LANG=en_US.UTF-8" > /mnt/etc/locale.conf
 
 
 ###############################################################################
-# INSTALL BOOTLOADER TODO
+# INSTALL BOOTLOADER
 ###############################################################################
+
+arch-chroot /mnt pacman -Sy --noconfirm grub
+arch-chroot /mnt grub-install /dev/sda
+arch-chroot /mnt grub-mkconfig -o /grub/grub.cfg
+
+
+###############################################################################
+# INSTALLATION COMPLETE
+###############################################################################
+
+echo "Installation complete."
