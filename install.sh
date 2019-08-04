@@ -95,8 +95,8 @@ swap_end=$(( $swap_size + ${boot_size} + 1 ))MiB
 
 # create partitions
 parted --script "${device}" -- mklabel gpt              \
-  mkpart primary ext3 1Mib ${boot_size}MiB              \
-  set 1 bios_grub on                                    \
+  mkpart ESP fat32 1Mib ${boot_size}MiB                 \
+  set 1 boot on                                         \
   mkpart primary linux-swap ${boot_size}MiB ${swap_end} \
   mkpart primary ext4 ${swap_end} 100%
 
@@ -111,7 +111,7 @@ wipefs "${part_swap}"
 wipefs "${part_root}"
 
 # create file systems
-mkfs.ext3 "${part_boot}"
+mkfs.vfat -F32 "${part_boot}"
 mkswap "${part_swap}"
 mkfs.ext4 "${part_root}"
 
