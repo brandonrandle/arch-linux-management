@@ -84,7 +84,7 @@ ln -sf "$REPO_NAME.files.tar.gz" "$LOCAL_PATH/$REPO_NAME.files"
 # ADD PACKAGES TO REPO
 ###############################################################################
 
-repo-add "$LOCAL_PATH/$REPO_NAME.db.tar.xz" "${PACKAGES[@]}/"*.pkg.tar.xz
+repo-add "$LOCAL_PATH/$REPO_NAME.db.tar.xz" ${PACKAGES[@]}/*.pkg.tar.xz
 
 
 ###############################################################################
@@ -92,6 +92,6 @@ repo-add "$LOCAL_PATH/$REPO_NAME.db.tar.xz" "${PACKAGES[@]}/"*.pkg.tar.xz
 ###############################################################################
 
 s3cmd sync --follow-symlinks --acl-public \
-  "${PACKAGES[@]}/"*.pkg.tar.xz \
+  ${PACKAGES[@]}/*.pkg.tar.xz \
   "$LOCAL_PATH/$REPO_NAME".{db,files}{,.tar.xz} \
   "$REMOTE_PATH/"
