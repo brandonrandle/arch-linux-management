@@ -156,7 +156,7 @@ bpman__build() {
 bpman__sync() {
     sync_remote_to_local
     sync_cleanup
-    aur_sync
+    aur_sync "$@"
     sync_local_to_remote-sync
 }
 
