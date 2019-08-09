@@ -50,9 +50,6 @@ setup_build() {
     # sets chroot install path
     CHROOT="$PWD/root"
 
-    # create local directory for repo
-    mkdir -p "$LOCAL_PATH"
-
     # creates chroot install location
     mkdir -p "$CHROOT"
 
@@ -81,6 +78,10 @@ perform_build() {
 ###############################################################################
 
 sync_remote_to_local() {
+    # create local directory for repo
+    mkdir -p "$LOCAL_PATH"
+
+    # sync remote repo to local directory
     s3cmd sync "$REMOTE_PATH/$REPO_NAME".{db,files}.tar.xz "$LOCAL_PATH/"
     ln -sf "$REPO_NAME.db.tar.xz" "$LOCAL_PATH/$REPO_NAME.db"
     ln -sf "$REPO_NAME.files.tar.gz" "$LOCAL_PATH/$REPO_NAME.files"
