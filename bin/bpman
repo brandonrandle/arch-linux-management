@@ -96,16 +96,48 @@ add_packages_to_repo() {
     repo-add "$LOCAL_PATH/$REPO_NAME.db.tar.xz" ${PACKAGES[@]}/*.pkg.tar.xz
 }
 
+###############################################################################
+# SYNC LOCAL DB TO REMOTE - AUR SYNC
+###############################################################################
+
+sync_local_to_remote-sync() {
+    s3cmd sync --follow-symlinks --acl-public \
+      "$LOCAL_PATH/"*.pkg.tar.xz \
+      "$LOCAL_PATH/$REPO_NAME".{db,files}{,.tar.xz} \
+      "$REMOTE_PATH/"
+}
+
 
 ###############################################################################
-# SYNC LOCAL DB TO REMOTE
+# SYNC LOCAL DB TO REMOTE - BUILD
 ###############################################################################
 
-sync_local_to_remote() {
+sync_local_to_remote-build() {
     s3cmd sync --follow-symlinks --acl-public \
       ${PACKAGES[@]}/*.pkg.tar.xz \
       "$LOCAL_PATH/$REPO_NAME".{db,files}{,.tar.xz} \
       "$REMOTE_PATH/"
+}
+
+
+###############################################################################
+# SYNC CLEANUP
+###############################################################################
+
+sync_cleanup() {
+    # clean up older packages that may have been deleted from remote so they
+    # don't get re-uploaded
+    rm -f "$LOCAL_PATH/"*.pkg.tar.xz
+}
+
+
+###############################################################################
+# AUR SYNC
+###############################################################################
+
+aur_sync() {
+    # can be used to add new packages or to update packages
+    aur sync -d "$REPO_NAME" --root="$LOCAL_PATH" "$@" || true
 }
 
 
@@ -118,11 +150,15 @@ bpman__build() {
     perform_build
     sync_remote_to_local
     add_packages_to_repo
-    sync_local_to_remote
+    sync_local_to_remote-build
 }
 
-# bpman__sync() {
-# }
+bpman__sync() {
+    sync_remote_to_local
+    sync_cleanup
+    aur_sync
+    sync_local_to_remote-sync
+}
 
 # bpman__delete() {
 # }
