@@ -8,45 +8,47 @@ license=('GPL3')
 
 ROOT_DIR=$PWD
 
-###############################################################################
-# Arch Linux Package Group - base (x86_64)
-###############################################################################
-# With these explicit removals:
-# vi - will be using vim
-# nano - will be using vim
-# s-nail - no reason to have
-depends=(
-bash bzip2 coreutils cryptsetup device-mapper dhcpcd diffutils e2fsprogs file
-filesystem findutils gawk gcc-libs gettext glibc grep gzip inetutils iproute2
-iputils jfsutils less licenses linux linux-firmware logrotate lvm2 man-db
-man-pages mdadm netctl pacman pciutils perl procps-ng psmisc reiserfsprogs sed
-shadow sysfsutils systemd-sysvcompat tar texinfo usbutils util-linux which
-xfsprogs
-)
+package() {
+    ###############################################################################
+    # Arch Linux Package Group - base (x86_64)
+    ###############################################################################
+    # With these explicit removals:
+    # vi - will be using vim
+    # nano - will be using vim
+    # s-nail - no reason to have
+    depends=(
+    bash bzip2 coreutils cryptsetup device-mapper dhcpcd diffutils e2fsprogs file
+    filesystem findutils gawk gcc-libs gettext glibc grep gzip inetutils iproute2
+    iputils jfsutils less licenses linux linux-firmware logrotate lvm2 man-db
+    man-pages mdadm netctl pacman pciutils perl procps-ng psmisc reiserfsprogs sed
+    shadow sysfsutils systemd-sysvcompat tar texinfo usbutils util-linux which
+    xfsprogs
+    )
 
-###############################################################################
-# General Packages
-###############################################################################
-depends+=(
-sudo
-)
+    ###############################################################################
+    # General Packages
+    ###############################################################################
+    depends+=(
+    sudo
+    )
 
-###############################################################################
-# Networking
-###############################################################################
-depends+=(
-wpa_supplicant openssh
-)
+    ###############################################################################
+    # Networking
+    ###############################################################################
+    depends+=(
+    wpa_supplicant openssh
+    )
 
-###############################################################################
-# Editor
-###############################################################################
-depends+=(
-vim
-)
+    ###############################################################################
+    # Editor
+    ###############################################################################
+    depends+=(
+    vim
+    )
 
-###############################################################################
-# Config
-###############################################################################
-# copies all config files recursively with original paths into package
-cp -a "$ROOT_DIR/config/base/"* "$pkgdir"
+    ###############################################################################
+    # Config
+    ###############################################################################
+    # copies all config files recursively with original paths into package
+    cp -a "$ROOT_DIR/config/base/"* "$pkgdir"
+}
