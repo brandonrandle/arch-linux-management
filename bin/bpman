@@ -136,7 +136,9 @@ bpman__help() {
 ###############################################################################
 
 # ensures that the subcommand given is a valid function
-if declare -f "bpman__$1" >/dev/null; then
+if [ $# -eq 0 ]; then
+    bpman__help
+elif declare -f "bpman__$1" >/dev/null; then
     func="bpman__$1"; shift
     "$func" "$@"
 else # if subcommand not a valid function, prints help
