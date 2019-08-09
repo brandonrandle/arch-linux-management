@@ -107,6 +107,16 @@ sync_local_to_remote-sync() {
       "$REMOTE_PATH/"
 }
 
+###############################################################################
+# SYNC LOCAL DB TO REMOTE - AUR REMOVE
+###############################################################################
+
+sync_local_to_remote-remove() {
+    s3cmd sync --follow-symlinks --acl-public \
+      "$LOCAL_PATH/$REPO_NAME".{db,files}{,.tar.xz} \
+      "$REMOTE_PATH/"
+}
+
 
 ###############################################################################
 # SYNC LOCAL DB TO REMOTE - BUILD
@@ -142,6 +152,26 @@ aur_sync() {
 
 
 ###############################################################################
+# REMOVE AUR PACKAGE(S) FROM REPO
+###############################################################################
+
+repo_remove() {
+    repo-remove "$LOCAL_PATH/$REPO_NAME.db.tar.xz" "$@"
+}
+
+
+###############################################################################
+# REMOVE AUR PACKAGE(S) FROM REMOTE REPO
+###############################################################################
+
+remote_remove_packages() {
+    for package in "$@"; do
+      s3cmd rm "$REMOTE_PATH/$package-*.pkg.tar.xz"
+    done
+}
+
+
+###############################################################################
 # SUBCOMMANDS
 ###############################################################################
 
@@ -160,8 +190,12 @@ bpman__sync() {
     sync_local_to_remote-sync
 }
 
-# bpman__delete() {
-# }
+bpman__delete() {
+    sync_remote_to_local
+    repo_remove "$@"
+    sync_local_to_remote-remove
+    remote_remove_packages "$@"
+}
 
 bpman__help() {
     echo "Help text."
