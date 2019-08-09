@@ -1,0 +1,4 @@
+# This configuration is managed by the brandle-base package.
+# https://gitlab.com/brandonrandle/arch-linux-management
+
+%wheel ALL=(ALL) ALL
