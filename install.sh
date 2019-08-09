@@ -26,7 +26,7 @@ trap 's=$?; echo "$0: Error on line "$LINENO": $BASH_COMMAND"; exit $s' ERR
 # UPDATE MIRRORS
 ###############################################################################
 
-# REPO_URL=""
+REPO_URL="https://brandle-arch.s3.amazonaws.com/repo/x86_64/"
 MIRRORLIST_URL="https://www.archlinux.org/mirrorlist/?country=US&protocol=https&use_mirror_status=on"
 
 # install pacman-contrib for rankmirrors utility
@@ -126,11 +126,25 @@ mount "${part_boot}" /mnt/boot
 # BASIC INSTALLATION & CONFIGURATION
 ###############################################################################
 
+# add personal package repo to install environment
+cat >>/etc/pacman.conf <<EOF
+[brandle]
+SigLevel = Optional TrustAll
+Server = $REPO_URL
+EOF
+
 # install packages
-pacstrap /mnt base
+pacstrap /mnt brandle-base
 
 # generate fstab file
 genfstab -U /mnt >> /mnt/etc/fstab
+
+# add personal package repo to new environment
+cat >>/mnt/etc/pacman.conf <<EOF
+[brandle]
+SigLevel = Optional TrustAll
+Server = $REPO_URL
+EOF
 
 # set time zone
 # TODO: Make the region/city an interactive choice at the start
