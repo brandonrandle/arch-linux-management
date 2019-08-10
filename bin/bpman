@@ -135,7 +135,7 @@ sync_local_to_remote-build() {
 ###############################################################################
 
 sync_cleanup() {
-    # clean up older packages that may have been deleted from remote so they
+    # clean up older packages that may have been removed from remote so they
     # don't get re-uploaded
     rm -f "$LOCAL_PATH/"*.pkg.tar.xz
 }
@@ -190,7 +190,7 @@ bpman__sync() {
     sync_local_to_remote-sync
 }
 
-bpman__delete() {
+bpman__remove() {
     sync_remote_to_local
     repo_remove "$@"
     sync_local_to_remote-remove
@@ -203,7 +203,7 @@ bpman__help() {
     printf "%s\n"       "Available Commands:"
     printf "   %s\t%s\n" "build" "build all packages in pkg"
     printf "   %s\t%s\n" "sync <args>" "add or update AUR package(s)"
-    printf "   %s\t%s\n" "delete" "remove AUR package(s)"
+    printf "   %s\t%s\n" "remove" "remove AUR package(s)"
 }
 
 
