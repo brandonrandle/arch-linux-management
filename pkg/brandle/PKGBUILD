@@ -1,54 +1,76 @@
-pkgname=brandle-base
-pkgver=0.0.1
-pkgrel=1
-pkgdesc="Base system configuration for Brandon Randle's systems."
+pkgbase="brandle"
+pkgname=( brandle-base brandle-devel brandle-arch-repo )
+pkgver=0.0.2
+pkgrel=2
+pkgdesc="System configuration for Brandon Randle's systems."
 arch=('any')
 url="https://gitlab.com/brandonrandle/arch-linux-management"
 license=('GPL3')
 
 ROOT_DIR=$PWD
 
-package() {
-    ###############################################################################
-    # Arch Linux Package Group - base (x86_64)
-    ###############################################################################
+###############################################################################
+# BRANDLE-BASE
+###############################################################################
+package_brandle-base() {
     # With these explicit removals:
     # vi - will be using vim
     # nano - will be using vim
-    # s-nail - no reason to have
     depends=(
-    bash bzip2 coreutils cryptsetup device-mapper dhcpcd diffutils e2fsprogs file
-    filesystem findutils gawk gcc-libs gettext glibc grep gzip inetutils iproute2
-    iputils jfsutils less licenses linux linux-firmware logrotate lvm2 man-db
-    man-pages mdadm netctl pacman pciutils perl procps-ng psmisc reiserfsprogs sed
-    shadow sysfsutils systemd-sysvcompat tar texinfo usbutils util-linux which
-    xfsprogs
+    bash bzip2 coreutils cryptsetup device-mapper dhcpcd diffutils e2fsprogs
+    file filesystem findutils gawk gcc-libs gettext glibc grep gzip inetutils
+    iproute2 iputils jfsutils less licenses linux linux-firmware logrotate lvm2
+    man-db man-pages mdadm netctl pacman pciutils perl procps-ng psmisc
+    reiserfsprogs sed shadow s-nail sysfsutils systemd-sysvcompat tar texinfo
+    usbutils util-linux which xfsprogs
     )
 
-    ###############################################################################
     # General Packages
-    ###############################################################################
-    depends+=(
-    sudo
-    )
+    depends+=( sudo )
 
-    ###############################################################################
     # Networking
-    ###############################################################################
-    depends+=(
-    wpa_supplicant openssh
-    )
+    depends+=( wpa_supplicant openssh )
 
-    ###############################################################################
     # Editor
-    ###############################################################################
-    depends+=(
-    vim
-    )
+    depends+=( vim )
 
-    ###############################################################################
     # Config
-    ###############################################################################
     # copies all config files recursively with original paths into package
     cp -a "$ROOT_DIR/config/base/"* "$pkgdir"
+}
+
+###############################################################################
+# BRANDLE-DEVEL
+###############################################################################
+package_brandle-devel() {
+    # this package contains base tools used in development
+
+    # foundation package
+    depends=( brandle-base )
+
+    # Arch Linux base-devel packages
+    depends+=(
+        autoconf automake binutils bison fakeroot file findutils flex gawk gcc
+        gettext grep groff gzip libtool m4 make pacman patch pkgconf sed sudo
+        systemd texinfo util-linux which
+    )
+
+    # General Packages
+    depends+=( git )
+}
+
+###############################################################################
+# BRANDLE-ARCH-REPO
+###############################################################################
+package_brandle-arch-repo() {
+    # this package contains all tools used in my personal repo management
+
+    # foundation package
+    depends=( brandle-devel )
+
+    # building / utility packages
+    depends+=( devtools aurutils )
+
+    # repo interaction packages
+    depends+=( s3cmd )
 }
