@@ -137,7 +137,7 @@ mount "${part_boot}" /mnt/boot
 
 # install packages
 #pacstrap /mnt brandle-base
-pacstrap /mnt base linux linux-firmware sudo wpa_supplicant openssh vim grub efibootmgr
+pacstrap /mnt base linux linux-firmware sudo wpa_supplicant dhcpcd openssh vim grub efibootmgr
 
 # generate fstab file
 genfstab -U /mnt >> /mnt/etc/fstab
