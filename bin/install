@@ -2,8 +2,10 @@
 # WARNING: This script will destroy data on the selected disk.
 
 # An internet connection is required to run this script. Connect with:
-# wpa_supplicant -B -i <interface> -c <(wpa_passphrase <SSID> <PASSPHRASE>)
+# wpa_supplicant -B -i <interface> -c <(wpa_passphrase "<SSID>" "<PASSPHRASE>")
 # dhclient <interface>
+# Make sure interface is down and no other processes are using it.
+# (ip link set <interface> down)
 
 # This script can be run by executing the following:
 # curl -sL https://git.io/bpman-install | bash
@@ -26,7 +28,7 @@ trap 's=$?; echo "$0: Error on line "$LINENO": $BASH_COMMAND"; exit $s' ERR
 # UPDATE MIRRORS
 ###############################################################################
 
-REPO_URL="https://brandle-arch.s3.amazonaws.com/repo/x86_64/"
+#REPO_URL="https://brandle-arch.s3.amazonaws.com/repo/x86_64/"
 MIRRORLIST_URL="https://www.archlinux.org/mirrorlist/?country=US&protocol=https&use_mirror_status=on"
 
 # install pacman-contrib for rankmirrors utility
@@ -127,24 +129,25 @@ mount "${part_boot}" /mnt/boot
 ###############################################################################
 
 # add personal package repo to install environment
-cat >>/etc/pacman.conf <<EOF
-[brandle]
-SigLevel = Optional TrustAll
-Server = $REPO_URL
-EOF
+#cat >>/etc/pacman.conf <<EOF
+#[brandle]
+#SigLevel = Optional TrustAll
+#Server = $REPO_URL
+#EOF
 
 # install packages
-pacstrap /mnt brandle-base
+#pacstrap /mnt brandle-base
+pacstrap /mnt base linux linux-firmware sudo wpa_supplicant openssh vim grub efibootmgr
 
 # generate fstab file
 genfstab -U /mnt >> /mnt/etc/fstab
 
 # add personal package repo to new environment
-cat >>/mnt/etc/pacman.conf <<EOF
-[brandle]
-SigLevel = Optional TrustAll
-Server = $REPO_URL
-EOF
+#cat >>/mnt/etc/pacman.conf <<EOF
+#[brandle]
+#SigLevel = Optional TrustAll
+#Server = $REPO_URL
+#EOF
 
 # set time zone
 # TODO: Make the region/city an interactive choice at the start
